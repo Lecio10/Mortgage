@@ -1,0 +1,59 @@
+# Build Folders
+bin/
+obj/
+Debug/
+Release/
+
+# Visual Studio temporary files
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+# Rider IDE
+.idea/
+
+# NuGet packages
+*.nupkg
+packages/
+# The packages folder can be ignored because NuGet restore will recreate it
+**/packages/*
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Local history for Visual Studio
+*.localhistory
+
+# Rider & JetBrains
+*.DotSettings.user
+*.ReSharper.*
+_ReSharper*/
+*.sln.DotSettings.user
+
+# User-specific files
+*.rsuser
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# MonoDevelop
+*.pidb
+*.userprefs
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Entity Framework / database
+*.mdf
+*.ldf
+
+# Publish output
+Publish/
+*.publishsettings
