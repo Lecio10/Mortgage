@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class AppDbcontext : DbContext
 {
-    public DbSet<Mortgagee>? Mortgages { get; set; }
+    public DbSet<Mortgagee> Mortgages { get; set; }
     public DbSet<ScheduledPayment> ScheduledPayments {get; set;}
     public DbSet<Payment> Payments {get; set;}
     public DbSet<Overpayment> Overpayments {get; set;}

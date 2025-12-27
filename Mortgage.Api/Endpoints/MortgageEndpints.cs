@@ -5,7 +5,7 @@ public static class MortgageEndpoints
 {
     public static void MapMortgageEndpoints (this WebApplication app)
     {
-        app.MapPost("/mortgages", (MortgageDto mortgageDto, AppDbcontext dbcontext) =>
+        app.MapPost("/mortgages", (MortgageDto mortgageDto, AppDbcontext dbcontext, IScheduleService scheduleService) =>
         {
             Mortgagee mortgage = new Mortgagee();
             mortgage.Loan_Ammount = mortgageDto.Loan_Ammount;
@@ -16,7 +16,6 @@ public static class MortgageEndpoints
             dbcontext.Add(mortgage);
             dbcontext.SaveChanges();
 
-            IScheduleService scheduleService = new ScheduleService(dbcontext);
             var schedule = scheduleService.GenerateSchedule(mortgage.id);
 
             return Results.Accepted();
@@ -30,10 +29,9 @@ public static class MortgageEndpoints
 
         });
         
-        app.MapGet("/mortgages/{id}/schedule", (Guid id, AppDbcontext dbcontext) =>
+        app.MapGet("/mortgages/{id}/schedule", async (Guid id, IScheduleService scheduleService) =>
         {
-            IScheduleService scheduleService = new ScheduleService(dbcontext);
-            var scheduleDto = scheduleService.GenerateSchedule(id);
+            var scheduleDto = await scheduleService.GenerateSchedule(id);
 
             return Results.Json(scheduleDto);
         });
