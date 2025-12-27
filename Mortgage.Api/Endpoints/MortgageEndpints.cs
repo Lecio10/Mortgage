@@ -16,8 +16,8 @@ public static class MortgageEndpoints
             dbcontext.Add(mortgage);
             dbcontext.SaveChanges();
 
-            IScheduleGenerator scheduleGenerator = new ScheduleGenerator(dbcontext);
-            var schedule = scheduleGenerator.Generate(mortgage.id);
+            IScheduleService scheduleService = new ScheduleService(dbcontext);
+            var schedule = scheduleService.GenerateSchedule(mortgage.id);
 
             return Results.Accepted();
         });
@@ -32,8 +32,8 @@ public static class MortgageEndpoints
         
         app.MapGet("/mortgages/{id}/schedule", (Guid id, AppDbcontext dbcontext) =>
         {
-            IScheduleGenerator scheduleGenerator = new ScheduleGenerator(dbcontext);
-            var scheduleDto = scheduleGenerator.Generate(id);
+            IScheduleService scheduleService = new ScheduleService(dbcontext);
+            var scheduleDto = scheduleService.GenerateSchedule(id);
 
             return Results.Json(scheduleDto);
         });

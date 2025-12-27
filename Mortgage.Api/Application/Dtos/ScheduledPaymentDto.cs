@@ -7,5 +7,4 @@ public class ScheduledPaymentDto
     public double Kwota_Odsetek {get; set;}
     public double Kwota_Kapitału {get; set;}
     public double Pozostało_Do_Spłaty {get; set;}
-    public Guid ScheduleId {get; set;}
 }
