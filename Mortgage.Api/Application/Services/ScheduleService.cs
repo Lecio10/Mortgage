@@ -1,15 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 
-public class ScheduleGenerator : IScheduleGenerator
+public class ScheduleService : IScheduleService
 {
     private readonly AppDbcontext _dbContext;
 
-    public ScheduleGenerator(AppDbcontext dbContext)
+    public ScheduleService(AppDbcontext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public ScheduleDto Generate(Guid mortgage_Id)
+    public ScheduleDto GenerateSchedule(Guid mortgage_Id)
     {
         var mortgage = _dbContext.Mortgages.FirstOrDefault(a => a.id == mortgage_Id);
         
@@ -17,8 +17,9 @@ public class ScheduleGenerator : IScheduleGenerator
         {
             throw new MortgageNotFoundException(mortgage_Id);
         }
+        var scheduleGenerator = new ScheduleGenerator();
+        var schedule = scheduleGenerator.Generate(mortgage);
 
-        var schedule = new Schedule(mortgage);
         var scheduleDto = MapScheduleToScheduleDto(schedule);
 
         return scheduleDto;
