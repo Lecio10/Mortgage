@@ -17,7 +17,7 @@ public static class MortgageEndpoints
             dbcontext.SaveChanges();
 
             IScheduleGenerator scheduleGenerator = new ScheduleGenerator(dbcontext);
-            var schedule = scheduleGenerator.Generate(mortgage);
+            var schedule = scheduleGenerator.Generate(mortgage.id);
 
             return Results.Accepted();
         });
