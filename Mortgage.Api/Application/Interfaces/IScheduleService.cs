@@ -1,4 +1,4 @@
 public interface IScheduleService
 {
-    public ScheduleDto GenerateSchedule(Guid mortgage_Id);
+    public Task<ScheduleDto> GenerateSchedule(Guid mortgageId);
 }

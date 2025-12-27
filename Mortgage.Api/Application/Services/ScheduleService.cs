@@ -2,20 +2,20 @@ using Microsoft.EntityFrameworkCore;
 
 public class ScheduleService : IScheduleService
 {
-    private readonly AppDbcontext _dbContext;
+    private readonly IMortgageRepository _mortgageRepository;
 
-    public ScheduleService(AppDbcontext dbContext)
+    public ScheduleService(IMortgageRepository mortgageRepository)
     {
-        _dbContext = dbContext;
+        _mortgageRepository = mortgageRepository;
     }
 
-    public ScheduleDto GenerateSchedule(Guid mortgage_Id)
+    public async Task<ScheduleDto> GenerateSchedule(Guid mortgageId)
     {
-        var mortgage = _dbContext.Mortgages.FirstOrDefault(a => a.id == mortgage_Id);
+        var mortgage = await _mortgageRepository.GetMortgageByIdAsync(mortgageId);
         
-        if (mortgage == null)
+        if (mortgage is null)
         {
-            throw new MortgageNotFoundException(mortgage_Id);
+            throw new MortgageNotFoundException(mortgageId);
         }
         var scheduleGenerator = new ScheduleGenerator();
         var schedule = scheduleGenerator.Generate(mortgage);

@@ -1,6 +1,6 @@
 using System.Reflection.Metadata.Ecma335;
 
-public class ScheduleGenerator
+public class ScheduleGenerator : IScheduleGenerator
 {
     public Schedule Generate(Mortgagee mortgage)
     {
