@@ -41,8 +41,7 @@ public class ScheduleService : IScheduleService
                 Wysokość_Raty = p.Wysokość_Raty,
                 Kwota_Odsetek = p.Kwota_Odsetek,
                 Kwota_Kapitału = p.Kwota_Kapitału,
-                Pozostało_Do_Spłaty = p.Pozostało_Do_Spłaty,
-                ScheduleId = p.ScheduleId
+                Pozostało_Do_Spłaty = p.Pozostało_Do_Spłaty
             }).ToList();
         
         return scheduleDto;
