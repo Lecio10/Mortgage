@@ -16,8 +16,8 @@ public static class MortgageEndpoints
             dbcontext.Add(mortgage);
             dbcontext.SaveChanges();
 
-            IScheduleGenerator scheduleGenerator = new Schedule_Generator2();
-            var schedule = scheduleGenerator.Generate(mortgage);
+            IScheduleGenerator scheduleGenerator = new ScheduleGenerator(dbcontext);
+            var schedule = scheduleGenerator.Generate(mortgage.id);
 
             return Results.Accepted();
         });
@@ -32,12 +32,10 @@ public static class MortgageEndpoints
         
         app.MapGet("/mortgages/{id}/schedule", (Guid id, AppDbcontext dbcontext) =>
         {
-            var mortgage = dbcontext.Mortgages.FirstOrDefault(m => m.id == id);
+            IScheduleGenerator scheduleGenerator = new ScheduleGenerator(dbcontext);
+            var scheduleDto = scheduleGenerator.Generate(id);
 
-            IScheduleGenerator scheduleGenerator = new Schedule_Generator2();
-            var schedule = scheduleGenerator.Generate(mortgage);
-
-            return Results.Json(schedule);
+            return Results.Json(scheduleDto);
         });
         
         app.MapPost("/mortgages/{id}/overpayments", (OverpaymentDto dto, Guid id, AppDbcontext dbcontext) =>
