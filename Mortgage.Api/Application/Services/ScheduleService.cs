@@ -3,12 +3,36 @@ using Microsoft.EntityFrameworkCore;
 public class ScheduleService : IScheduleService
 {
     private readonly IMortgageRepository _mortgageRepository;
+    private readonly IScheduleRepository _scheduleRepository;
 
-    public ScheduleService(IMortgageRepository mortgageRepository)
+    public ScheduleService(IMortgageRepository mortgageRepository, IScheduleRepository scheduleRepository)
     {
         _mortgageRepository = mortgageRepository;
+        _scheduleRepository = scheduleRepository;
     }
+    
+    public async Task<ScheduleDto> GetScheduleForMortgageAsync(Guid mortgageId)
+    {
+        
+        var mortgage = await _mortgageRepository.GetMortgageByIdAsync(mortgageId);
+        
+        if (mortgage is null)
+        {
+            throw new MortgageNotFoundException(mortgageId);
+        }
+        
+        var schedule = await _scheduleRepository.GetScheduleForMortgageAsync(mortgageId);
+        
+        if (schedule is null)
+        {
+            throw new ScheduleGenerationException(mortgageId);
+        }
+        
+        var scheduleDto = MapScheduleToScheduleDto(schedule);
 
+        return scheduleDto;
+    }
+    
     public async Task<ScheduleDto> GenerateSchedule(Guid mortgageId)
     {
         var mortgage = await _mortgageRepository.GetMortgageByIdAsync(mortgageId);
@@ -19,6 +43,13 @@ public class ScheduleService : IScheduleService
         }
         var scheduleGenerator = new ScheduleGenerator();
         var schedule = scheduleGenerator.Generate(mortgage);
+
+        if (schedule is null)
+        {
+            throw new ScheduleGenerationException(mortgageId);
+        }
+        
+        await _scheduleRepository.SaveScheduleAsync(schedule);
 
         var scheduleDto = MapScheduleToScheduleDto(schedule);
 
@@ -33,7 +64,9 @@ public class ScheduleService : IScheduleService
         scheduleDto.Generation_Date = schedule.Generation_Date;
         scheduleDto.MortgageeId = schedule.MortgageeId;
         scheduleDto.Number_Of_Payments = schedule.Number_Of_Payments;
-        scheduleDto.ScheduledPayments = schedule.ScheduledPayments.Select(p => new ScheduledPaymentDto
+        scheduleDto.ScheduledPayments = schedule.ScheduledPayments
+        .OrderBy(p => p.Numer_Raty)
+        .Select(p => new ScheduledPaymentDto
             {
                 Id = p.Id,
                 Numer_Raty = p.Numer_Raty,
@@ -46,11 +79,4 @@ public class ScheduleService : IScheduleService
         
         return scheduleDto;
     }
-
-
-    public ScheduleDto Generate(Mortgagee mortgage)
-    {
-        return new ScheduleDto();
-    }
-
 }
