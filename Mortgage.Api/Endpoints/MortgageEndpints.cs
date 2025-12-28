@@ -5,35 +5,43 @@ public static class MortgageEndpoints
 {
     public static void MapMortgageEndpoints (this WebApplication app)
     {
-        app.MapPost("/mortgages", (MortgageDto mortgageDto, AppDbcontext dbcontext, IScheduleService scheduleService) =>
+        app.MapGet("/mortgages/{id}", async (Guid id, IMortgageService mortgageService) =>
         {
-            Mortgagee mortgage = new Mortgagee();
-            mortgage.Loan_Ammount = mortgageDto.Loan_Ammount;
-            mortgage.First_Instalment_Date = mortgageDto.First_Instalment_Date;
-            mortgage.Instalments = mortgageDto.Instalments;
-            mortgage.Interest_Rate_In_Percent = mortgageDto.Interest_Rate_In_Percent;
-
-            dbcontext.Add(mortgage);
-            dbcontext.SaveChanges();
-
-            var schedule = scheduleService.GenerateSchedule(mortgage.id);
-
-            return Results.Accepted();
+            try
+            {
+                var mortgageDto = await mortgageService.GetMortgageByIdAsync(id);
+                return Results.Ok(mortgageDto);
+            }
+            catch (Exception ex)
+            {
+                return Results.NotFound(ex.Message);
+            }
         });
 
-        app.MapGet("/mortgages/{id}", (Guid id, AppDbcontext dbcontext) =>
+        app.MapPost("/mortgages", (MortgageDto mortgageDto, IMortgageService mortgageService) =>
         {
-            var mortgage = dbcontext.Mortgages.FirstOrDefault(m => m.id == id);
-            
-            return mortgage is not null ? Results.Ok(mortgage) : Results.NotFound();
-
+            try
+            {
+                mortgageService.AddMortgage(mortgageDto);
+                return Results.Accepted();
+            }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
         });
         
         app.MapGet("/mortgages/{id}/schedule", async (Guid id, IScheduleService scheduleService) =>
         {
-            var scheduleDto = await scheduleService.GenerateSchedule(id);
-
-            return Results.Json(scheduleDto);
+            try
+            {
+                var scheduleDto = await scheduleService.GetScheduleForMortgageAsync(id);
+                return Results.Ok(scheduleDto);
+            }
+            catch (Exception ex)
+            {
+                return Results.NotFound(ex.Message);
+            }
         });
         
         app.MapPost("/mortgages/{id}/overpayments", (OverpaymentDto dto, Guid id, AppDbcontext dbcontext) =>
