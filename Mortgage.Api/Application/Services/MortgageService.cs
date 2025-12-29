@@ -1,10 +1,12 @@
 public class MortgageService : IMortgageService
 {
     private readonly IMortgageRepository _mortgageRepository;
+    private readonly IScheduleRepository _scheduleRepository;
 
-    public MortgageService(IMortgageRepository mortgageRepository)
+    public MortgageService(IMortgageRepository mortgageRepository, IScheduleRepository scheduleRepository)
     {
         _mortgageRepository = mortgageRepository;
+        _scheduleRepository = scheduleRepository;
     }
     
     public async Task<MortgageDto> GetMortgageByIdAsync(Guid mortgageId)
@@ -21,10 +23,13 @@ public class MortgageService : IMortgageService
         return mortgageDto;
     }
 
-    public async Task AddMortgage(MortgageDto mortgageDto)
+    public async Task AddMortgageAsync(MortgageDto mortgageDto)
     {
         var mortgage = MapMortgageDtoToMortgage(mortgageDto);
-        await _mortgageRepository.AddMortgage(mortgage);
+        await _mortgageRepository.AddMortgageAsync(mortgage);
+        
+        var schedule = new ScheduleGenerator().Generate(mortgage, null);
+        await _scheduleRepository.SaveScheduleAsync(schedule);
     }
 
     private MortgageDto MapMortgageToMortgageDto(Mortgagee mortgage)
