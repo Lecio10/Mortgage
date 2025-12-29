@@ -42,7 +42,7 @@ public class ScheduleService : IScheduleService
             throw new MortgageNotFoundException(mortgageId);
         }
         var scheduleGenerator = new ScheduleGenerator();
-        var schedule = scheduleGenerator.Generate(mortgage);
+        var schedule = scheduleGenerator.Generate(mortgage, null);
 
         if (schedule is null)
         {

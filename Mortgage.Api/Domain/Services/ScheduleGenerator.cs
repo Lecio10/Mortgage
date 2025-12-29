@@ -2,7 +2,7 @@ using System.Reflection.Metadata.Ecma335;
 
 public class ScheduleGenerator : IScheduleGenerator
 {
-    public Schedule Generate(Mortgagee mortgage)
+    public Schedule Generate(Mortgagee mortgage, List<Overpayment>? overpayments)
     {
         var schedule = new Schedule();
 
@@ -22,7 +22,7 @@ public class ScheduleGenerator : IScheduleGenerator
 
             //Process_Snowball(annuity_Payment, next_Payment_Date, store);
             
-            var remaining_Loan_After_Overpayments = Process_Overpayments(previous_Payment_Date, next_Payment_Date, remaining_Loan);
+            var remaining_Loan_After_Overpayments = Process_Overpayments(previous_Payment_Date, next_Payment_Date, remaining_Loan, overpayments);
 
             if (remaining_Loan != remaining_Loan_After_Overpayments)
             {
@@ -80,9 +80,13 @@ public class ScheduleGenerator : IScheduleGenerator
         return payment;
     }
 
-    public double Process_Overpayments(DateTime start_Date, DateTime end_Date, double remaining_Loan)
+    public double Process_Overpayments(DateTime start_Date, DateTime end_Date, double remaining_Loan, List<Overpayment>? overpayments)
     {
-        var overpayments = new List<Overpayment>();
+        if (overpayments is null)
+        {
+            return remaining_Loan;
+        }
+        
         var period_overpayments = overpayments.Where(a => a.Overpayment_Date > start_Date && a.Overpayment_Date <= end_Date);
         
         foreach (var overpayment in period_overpayments)

@@ -1,4 +1,4 @@
 public interface IScheduleGenerator
 {
-    public Schedule Generate(Mortgagee mortgage);
+    public Schedule Generate(Mortgagee mortgage, List<Overpayment>? overpayments);
 }

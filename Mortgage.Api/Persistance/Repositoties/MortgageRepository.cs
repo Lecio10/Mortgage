@@ -14,7 +14,7 @@ public class MortgageRepository : IMortgageRepository
         return await _dbContext.Mortgages.FirstOrDefaultAsync(i => i.id == mortgageId);
     }
 
-    public async Task AddMortgage(Mortgagee mortgage)
+    public async Task AddMortgageAsync(Mortgagee mortgage)
     {
         await _dbContext.Mortgages.AddAsync(mortgage);
 

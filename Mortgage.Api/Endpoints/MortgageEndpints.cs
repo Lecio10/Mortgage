@@ -18,11 +18,11 @@ public static class MortgageEndpoints
             }
         });
 
-        app.MapPost("/mortgages", (MortgageDto mortgageDto, IMortgageService mortgageService) =>
+        app.MapPost("/mortgages", async (MortgageDto mortgageDto, IMortgageService mortgageService) =>
         {
             try
             {
-                mortgageService.AddMortgage(mortgageDto);
+                await mortgageService.AddMortgageAsync(mortgageDto);
                 return Results.Accepted();
             }
             catch (Exception ex)
@@ -44,21 +44,30 @@ public static class MortgageEndpoints
             }
         });
         
-        app.MapPost("/mortgages/{id}/overpayments", (OverpaymentDto dto, Guid id, AppDbcontext dbcontext) =>
+        app.MapPost("/mortgages/{id}/overpayments", async (OverpaymentDto overpaymentDto, Guid id, IOverpaymentService overpaymentService) =>
         {
-            var overpayments = new List<Overpayment> { new Overpayment
+            try
             {
-                Amount = dto.Amount,
-                Overpayment_Date = DateTime.Parse(dto.Overpayment_Date)
-            }};
-
-            return Results.Ok($"Nadpłata zarejestrowana");
+                await overpaymentService.AddOverpaymentAsync(overpaymentDto, id);
+                return Results.Accepted();
+            }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
         });
 
-        app.MapGet("/mortgages/{id}/overpayments", (Guid id, AppDbcontext dbcontext) =>
+        app.MapGet("/mortgages/{id}/overpayments", async (Guid id, IOverpaymentService overpaymentService) =>
         {
-            var overpayments = new List<Overpayment>();
-            return Results.Json(overpayments);
+            try
+            {
+                var overpaymentDtos = await overpaymentService.GetOverpayentsForMortgageAsync(id);
+                return Results.Ok(overpaymentDtos);
+            }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
         });
     }
 }

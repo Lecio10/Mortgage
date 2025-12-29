@@ -1,5 +1,5 @@
 public interface IMortgageService
 {
     public Task<MortgageDto> GetMortgageByIdAsync(Guid mortgageId);
-    public Task AddMortgage(MortgageDto mortgageDto);
+    public Task AddMortgageAsync(MortgageDto mortgageDto);
 }
