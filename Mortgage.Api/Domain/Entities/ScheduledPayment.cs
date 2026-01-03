@@ -8,5 +8,6 @@ public class ScheduledPayment
     public double Kwota_Kapitału {get; set;}
     public double Pozostało_Do_Spłaty {get; set;}
     public Guid ScheduleId {get; set;}
+    public bool IsPaid {get; set;}
     public Schedule? Schedule { get; set; }
 }

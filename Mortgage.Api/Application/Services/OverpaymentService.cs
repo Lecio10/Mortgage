@@ -55,6 +55,8 @@ public class OverpaymentService : IOverpaymentService
         {
             throw new ScheduleGenerationException(mortgageId);
         }
+
+        await _scheduleRepository.DisableCurrentlyActiveSchedule(mortgageId);
         
         await _scheduleRepository.SaveScheduleAsync(schedule);
     }
