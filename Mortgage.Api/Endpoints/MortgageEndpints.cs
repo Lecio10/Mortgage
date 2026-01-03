@@ -69,5 +69,44 @@ public static class MortgageEndpoints
                 return Results.BadRequest(ex.Message);
             }
         });
+
+        app.MapPost("/mortgages/{id}/payment", async (Guid id,  PaymentDto paymentDto, IPaymentService paymentService) =>
+        {
+            try
+            {
+                await paymentService.ProcessPaymentAsync(id, paymentDto);
+                return Results.Accepted();
+            }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+        });
+
+        // app.MapGet("/mortgages/{id}/shorten", async (Guid id, IOverpaymentService overpaymentService) =>
+        // {
+        //     try
+        //     {
+        //         var overpaymentDtos = await overpaymentService.GetOverpayentsForMortgageAsync(id);
+        //         return Results.Ok(overpaymentDtos);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return Results.BadRequest(ex.Message);
+        //     }
+        // });
+
+        // app.MapPost("/mortgages/{id}/shorten", async (OverpaymentDto overpaymentDto, Guid id, IOverpaymentService overpaymentService) =>
+        // {
+        //     try
+        //     {
+        //         await overpaymentService.AddOverpaymentAsync(overpaymentDto, id);
+        //         return Results.Accepted();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return Results.BadRequest(ex.Message);
+        //     }
+        // });
     }
 }

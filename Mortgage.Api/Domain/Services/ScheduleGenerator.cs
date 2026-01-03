@@ -9,6 +9,7 @@ public class ScheduleGenerator : IScheduleGenerator
         schedule.Id = Guid.NewGuid();
         schedule.MortgageeId = mortgage.id;
         schedule.Generation_Date = DateTime.Now;
+        schedule.IsActive = true;
         
         var remaining_Loan = mortgage.Loan_Ammount;
         var previous_Payment_Date = DateTime.Parse(mortgage.First_Instalment_Date);
@@ -62,6 +63,7 @@ public class ScheduleGenerator : IScheduleGenerator
                 Kwota_Kapitału = principal_Amount,
                 Pozostało_Do_Spłaty = Math.Round(remaining_Loan,2),
                 Id = Guid.NewGuid(),
+                IsPaid = false,
                 ScheduleId = schedule.Id
             });
 

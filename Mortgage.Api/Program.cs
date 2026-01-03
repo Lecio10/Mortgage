@@ -7,9 +7,11 @@ builder.Services.AddDbContext<AppDbcontext>(options => options.UseSqlServer(conn
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IMortgageService, MortgageService>();
 builder.Services.AddScoped<IOverpaymentService, OverpaymentService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IMortgageRepository, MortgageRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddScoped<IOverpaymentRepository, OverpaymentRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IScheduleGenerator, ScheduleGenerator>();
 
 var app = builder.Build();

@@ -25,7 +25,7 @@ public class ScheduleService : IScheduleService
         
         if (schedule is null)
         {
-            throw new ScheduleGenerationException(mortgageId);
+            throw new ScheduleNotFoundException(mortgageId);
         }
         
         var scheduleDto = MapScheduleToScheduleDto(schedule);
@@ -59,24 +59,28 @@ public class ScheduleService : IScheduleService
     public ScheduleDto MapScheduleToScheduleDto(Schedule schedule)
     {
         ScheduleDto scheduleDto = new ScheduleDto();
+        var index = 1;
         
         scheduleDto.Id = schedule.Id;
         scheduleDto.Generation_Date = schedule.Generation_Date;
         scheduleDto.MortgageeId = schedule.MortgageeId;
-        scheduleDto.Number_Of_Payments = schedule.Number_Of_Payments;
+
         scheduleDto.ScheduledPayments = schedule.ScheduledPayments
+        .Where(s => s.IsPaid == false)
         .OrderBy(p => p.Numer_Raty)
         .Select(p => new ScheduledPaymentDto
             {
                 Id = p.Id,
-                Numer_Raty = p.Numer_Raty,
+                Numer_Raty = index++,
                 Data_Płatności = p.Data_Płatności,
                 Wysokość_Raty = p.Wysokość_Raty,
                 Kwota_Odsetek = p.Kwota_Odsetek,
                 Kwota_Kapitału = p.Kwota_Kapitału,
                 Pozostało_Do_Spłaty = p.Pozostało_Do_Spłaty
             }).ToList();
-        
+
+        scheduleDto.Number_Of_Payments = scheduleDto.ScheduledPayments.Count;
+
         return scheduleDto;
     }
 }
