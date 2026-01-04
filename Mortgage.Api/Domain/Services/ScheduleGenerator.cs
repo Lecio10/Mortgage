@@ -10,12 +10,12 @@ public class ScheduleGenerator : IScheduleGenerator
         schedule.MortgageeId = mortgage.id;
         schedule.Generation_Date = DateTime.Now;
         schedule.IsActive = true;
-        
-        var remaining_Loan = mortgage.Loan_Ammount;
-        var previous_Payment_Date = DateTime.Parse(mortgage.First_Instalment_Date);
-        var annuity_Payment = Calculate_Annuity_Payment(remaining_Loan, mortgage.Instalments, mortgage.Interest_Rate_In_Percent);
+        var remaining_Loan = mortgage.Remainig_Loan;
 
-        for (int i = 1; i <= mortgage.Instalments; i++)
+        var previous_Payment_Date = DateTime.Parse(mortgage.Next_Instalment_Date).AddMonths(-1);
+        var annuity_Payment = Calculate_Annuity_Payment(remaining_Loan, mortgage.Remaining_Instalments, mortgage.Interest_Rate_In_Percent);
+
+        for (int i = 1; i <= mortgage.Remaining_Instalments; i++)
         {
             schedule.Number_Of_Payments = i;
 
@@ -37,7 +37,7 @@ public class ScheduleGenerator : IScheduleGenerator
                 {
                     remaining_Loan = remaining_Loan_After_Overpayments; 
                     //Recalculate annuity_Payment
-                    annuity_Payment = Calculate_Annuity_Payment(remaining_Loan, mortgage.Instalments - i + 1, mortgage.Interest_Rate_In_Percent);
+                    annuity_Payment = Calculate_Annuity_Payment(remaining_Loan, mortgage.Remaining_Instalments - i + 1, mortgage.Interest_Rate_In_Percent);
                 }
             }
             
@@ -47,7 +47,7 @@ public class ScheduleGenerator : IScheduleGenerator
             var monthly_Payment = annuity_Payment;
 
             //Handle last Instalment
-            if (i == mortgage.Instalments)
+            if (i == mortgage.Number_Of_Instalments)
             {
                 //Remaining loan must be added to montly Payment and remaining loan must be cleared.
                 monthly_Payment = monthly_Payment + remaining_Loan;
@@ -72,17 +72,17 @@ public class ScheduleGenerator : IScheduleGenerator
         return schedule;
     }
 
-    public double Calculate_Annuity_Payment(double loan_Ammount, double instalments, double interest_Rate_In_Percent)
+    public decimal Calculate_Annuity_Payment(decimal loan_Ammount, int instalments, decimal interest_Rate_In_Percent)
     {
         var monthly_interest_rate = interest_Rate_In_Percent / 100 / 12;
-        var numerator = monthly_interest_rate * Math.Pow(1 + monthly_interest_rate, instalments);
-        var denominator = Math.Pow(1 + monthly_interest_rate, instalments) - 1;
+        var numerator = monthly_interest_rate * Convert.ToDecimal(Math.Pow(Convert.ToDouble(1 + monthly_interest_rate), instalments));
+        var denominator = Convert.ToDecimal(Math.Pow(Convert.ToDouble(1 + monthly_interest_rate), instalments) - 1);
         var payment = loan_Ammount * (numerator / denominator);
         
         return payment;
     }
 
-    public double Process_Overpayments(DateTime start_Date, DateTime end_Date, double remaining_Loan, List<Overpayment>? overpayments)
+    public decimal Process_Overpayments(DateTime start_Date, DateTime end_Date, decimal remaining_Loan, List<Overpayment>? overpayments)
     {
         if (overpayments is null)
         {
@@ -93,17 +93,17 @@ public class ScheduleGenerator : IScheduleGenerator
         
         foreach (var overpayment in period_overpayments)
         {
-            if (overpayment.Amount >= remaining_Loan)
+            if (Convert.ToDecimal(overpayment.Amount) >= remaining_Loan)
             {
                 return 0;
             }
             
-            remaining_Loan = remaining_Loan - overpayment.Amount;
+            remaining_Loan = remaining_Loan - Convert.ToDecimal(overpayment.Amount);
         }
         return remaining_Loan;
     }
 
-    public double Get_Interest_For_Period(DateTime start_Date, DateTime end_Date, double loan_Ammount, double interest_Rate_In_Percent)
+    public decimal Get_Interest_For_Period(DateTime start_Date, DateTime end_Date, decimal loan_Ammount, decimal interest_Rate_In_Percent)
     {
         if (loan_Ammount == 0)
         {
@@ -117,7 +117,7 @@ public class ScheduleGenerator : IScheduleGenerator
         return Math.Round(interest,2);
     }
 
-    public double Get_Principal_Amount(double annuity_Payment, double interest)
+    public decimal Get_Principal_Amount(decimal annuity_Payment, decimal interest)
     {
         if (interest == 0)
         {

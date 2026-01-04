@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mortgage.Migrations
 {
     [DbContext(typeof(AppDbcontext))]
-    partial class AppDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20260104125557_2112202513")]
+    partial class _2112202513
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,18 +88,18 @@ namespace Mortgage.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Interest_Rate_In_Percent")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Interest_Rate_In_Percent")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("Loan_Ammount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Loan_Ammount")
+                        .HasColumnType("float");
 
                     b.Property<string>("Next_Instalment_Date")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Number_Of_Instalments")
-                        .HasColumnType("int");
+                    b.Property<double>("Number_Of_Instalments")
+                        .HasColumnType("float");
 
                     b.Property<decimal>("Remainig_Loan")
                         .HasColumnType("decimal(18,2)");
@@ -121,8 +124,8 @@ namespace Mortgage.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
 
                     b.Property<Guid>("MortgageeId")
                         .HasColumnType("uniqueidentifier");
@@ -187,23 +190,23 @@ namespace Mortgage.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("Kwota_Kapitału")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Kwota_Kapitału")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("Kwota_Odsetek")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Kwota_Odsetek")
+                        .HasColumnType("float");
 
                     b.Property<int>("Numer_Raty")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Pozostało_Do_Spłaty")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Pozostało_Do_Spłaty")
+                        .HasColumnType("float");
 
                     b.Property<Guid>("ScheduleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Wysokość_Raty")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Wysokość_Raty")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

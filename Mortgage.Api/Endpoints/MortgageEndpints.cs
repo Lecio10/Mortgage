@@ -9,8 +9,8 @@ public static class MortgageEndpoints
         {
             try
             {
-                var mortgageDto = await mortgageService.GetMortgageByIdAsync(id);
-                return Results.Ok(mortgageDto);
+                var mortgageDetailsDto = await mortgageService.GetMortgageByIdAsync(id);
+                return Results.Ok(mortgageDetailsDto);
             }
             catch (Exception ex)
             {

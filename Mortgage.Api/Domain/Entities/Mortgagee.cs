@@ -3,18 +3,21 @@ public class Mortgagee
 {
     public Guid id {get; set;}
     public string First_Instalment_Date {get; set;} = "";
-    public double Loan_Ammount {get; set;}
-    public double Instalments {get; set;}
-    public double Interest_Rate_In_Percent {get; set;}
-    public double Interest_Sum {get; set;}
-    public double Total_Sum {get; set;}
+    public decimal Loan_Ammount {get; set;}
+    public int Number_Of_Instalments {get; set;}
+    public decimal Interest_Rate_In_Percent {get; set;}
+    public decimal Remainig_Loan {get; set;}
+    public int Remaining_Instalments {get; set;}
+    public string Next_Instalment_Date {get; set;} = "";
+    public decimal Schedule_Based_Interest_Sum {get; set;}
+    public decimal Schedule_Based_Total_Sum {get; set;}
 
-    public double Calculate_Annuity_Payment()
+    public decimal Calculate_Annuity_Payment()
     {   
         var monthly_interest_rate = Interest_Rate_In_Percent / 100 / 12;
 
-        var numerator = monthly_interest_rate * Math.Pow(1 + monthly_interest_rate, Instalments);
-        var denominator = Math.Pow(1 + monthly_interest_rate, Instalments) - 1;
+        var numerator = monthly_interest_rate * Convert.ToDecimal(Math.Pow(Convert.ToDouble(1 + monthly_interest_rate), Number_Of_Instalments));
+        var denominator = Convert.ToDecimal(Math.Pow(Convert.ToDouble(1 + monthly_interest_rate), Number_Of_Instalments) - 1);
 
         var payment = Loan_Ammount * (numerator / denominator);
 
