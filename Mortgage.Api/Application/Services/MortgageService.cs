@@ -1,3 +1,5 @@
+using Microsoft.Identity.Client;
+
 public class MortgageService : IMortgageService
 {
     private readonly IMortgageRepository _mortgageRepository;
@@ -9,7 +11,7 @@ public class MortgageService : IMortgageService
         _scheduleRepository = scheduleRepository;
     }
     
-    public async Task<MortgageDto> GetMortgageByIdAsync(Guid mortgageId)
+    public async Task<MortgageDetailsDto> GetMortgageByIdAsync(Guid mortgageId)
     {
         var mortgage = await _mortgageRepository.GetMortgageByIdAsync(mortgageId);
 
@@ -18,9 +20,9 @@ public class MortgageService : IMortgageService
             throw new MortgageNotFoundException(mortgageId);
         }
 
-        var mortgageDto = MapMortgageToMortgageDto(mortgage);
+        var mortgageDetailsDto = MapMortgageToMortgageDetailsDto(mortgage);
 
-        return mortgageDto;
+        return mortgageDetailsDto;
     }
 
     public async Task AddMortgageAsync(MortgageDto mortgageDto)
@@ -30,18 +32,24 @@ public class MortgageService : IMortgageService
         
         var schedule = new ScheduleGenerator().Generate(mortgage, null);
         await _scheduleRepository.SaveScheduleAsync(schedule);
+
+        await _mortgageRepository.UpdatePostScheduleAsync(mortgage, schedule);
     }
 
-    private MortgageDto MapMortgageToMortgageDto(Mortgagee mortgage)
+    private MortgageDetailsDto MapMortgageToMortgageDetailsDto(Mortgagee mortgage)
     {
-        var mortgageDto = new MortgageDto();
+        var mortgageDetailsDto = new MortgageDetailsDto();
         
-        mortgageDto.First_Instalment_Date = mortgage.First_Instalment_Date;
-        mortgageDto.Loan_Ammount = mortgage.Loan_Ammount;
-        mortgageDto.Instalments = mortgage.Instalments;
-        mortgageDto.Interest_Rate_In_Percent = mortgage.Interest_Rate_In_Percent;
+        mortgageDetailsDto.Loan_Amount = mortgage.Loan_Ammount;
+        mortgageDetailsDto.Interest_Rate_In_Percent = mortgage.Interest_Rate_In_Percent;
+        mortgageDetailsDto.Number_Of_Instalments = mortgage.Number_Of_Instalments; 
+        mortgageDetailsDto.Next_Instalment_Date = mortgage.Next_Instalment_Date;
+        mortgageDetailsDto.Remaining_Loan = mortgage.Remainig_Loan;
+        mortgageDetailsDto.Remaining_Instalments = mortgage.Remaining_Instalments;
+        mortgageDetailsDto.Interest_Sum = mortgage.Schedule_Based_Interest_Sum;
+        mortgageDetailsDto.Total_Sum = mortgage.Schedule_Based_Total_Sum;
 
-        return mortgageDto;
+        return mortgageDetailsDto;
     }
 
     private Mortgagee MapMortgageDtoToMortgage(MortgageDto mortgageDto)
@@ -49,9 +57,15 @@ public class MortgageService : IMortgageService
         var mortgage = new Mortgagee();
 
         mortgage.First_Instalment_Date = mortgageDto.First_Instalment_Date;
+        mortgage.Next_Instalment_Date = mortgageDto.First_Instalment_Date;
         mortgage.Loan_Ammount = mortgageDto.Loan_Ammount;
-        mortgage.Instalments = mortgageDto.Instalments;
+        mortgage.Remainig_Loan = Convert.ToDecimal(mortgageDto.Loan_Ammount);
+        mortgage.Number_Of_Instalments = mortgageDto.Instalments;
+        mortgage.Remaining_Instalments = Convert.ToInt32(mortgageDto.Instalments);
         mortgage.Interest_Rate_In_Percent = mortgageDto.Interest_Rate_In_Percent;
+
+        mortgage.Schedule_Based_Interest_Sum = 0;
+        mortgage.Schedule_Based_Total_Sum = 0;
 
         return mortgage;
     }
