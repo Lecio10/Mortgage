@@ -30,13 +30,14 @@ public class MortgageRepository : IMortgageRepository
         );
     }
 
-    public async Task UpdatePostPaymentAsync(Mortgagee mortgage)
+    public async Task UpdatePostPaymentAsync(Mortgagee mortgage, ScheduledPayment scheduledPayment)
     {
         await _dbContext.Mortgages
         .Where(m => m.id == mortgage.id)
         .ExecuteUpdateAsync( setters => setters
             .SetProperty(i => i.Next_Instalment_Date, DateTime.Parse(mortgage.Next_Instalment_Date).AddMonths(1).ToString("yyyy-MM-dd"))
             .SetProperty(i => i.Remaining_Instalments, mortgage.Remaining_Instalments - 1)
+            .SetProperty(i => i.Remainig_Loan, mortgage.Remainig_Loan - scheduledPayment.Kwota_Kapitału)
         );
     }
 }
