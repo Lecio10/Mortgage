@@ -45,7 +45,7 @@ public class PaymentService : IPaymentService
 
         await _scheduleRepository.MarkSchedulePaymentAsPaidAsync(schedulePayment.Id);
 
-        await _mortgageRepository.UpdatePostPaymentAsync(mortgage);
+        await _mortgageRepository.UpdatePostPaymentAsync(mortgage, schedulePayment);
     }
 
     private Payment MapPaymentDtoToPayment(PaymentDto paymentDto)
