@@ -9,6 +9,8 @@ public class Mortgagee
     public decimal Remainig_Loan {get; set;}
     public int Remaining_Instalments {get; set;}
     public string Next_Instalment_Date {get; set;} = "";
+    public string? Interest_Rate_Type {get; set;} = "Fixed";
+    public decimal? First_Interest_Amount {get; set;}
     public decimal Schedule_Based_Interest_Sum {get; set;}
     public decimal Schedule_Based_Total_Sum {get; set;}
 

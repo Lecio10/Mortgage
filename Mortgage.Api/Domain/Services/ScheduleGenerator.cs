@@ -40,8 +40,24 @@ public class ScheduleGenerator : IScheduleGenerator
                     annuity_Payment = Calculate_Annuity_Payment(remaining_Loan, mortgage.Remaining_Instalments - i + 1, mortgage.Interest_Rate_In_Percent);
                 }
             }
+
+            decimal interest;
             
-            var interest = Get_Interest_For_Period(previous_Payment_Date, next_Payment_Date, remaining_Loan, mortgage.Interest_Rate_In_Percent);
+            if (mortgage.Interest_Rate_Type == "Fixed")
+            {
+                interest = Get_Interest_For_Period_Fixed(remaining_Loan, mortgage.Interest_Rate_In_Percent);
+            }
+            else
+            {
+                interest = Get_Interest_For_Period(previous_Payment_Date, next_Payment_Date, remaining_Loan, mortgage.Interest_Rate_In_Percent);
+            };
+
+            //override for a first instalment if requested
+            if ((i == 1) & mortgage.First_Interest_Amount.HasValue)
+            {
+                interest = Convert.ToDecimal(mortgage.First_Interest_Amount);
+            }
+
             var principal_Amount = Get_Principal_Amount(annuity_Payment, interest);
             remaining_Loan = remaining_Loan - principal_Amount;
             var monthly_Payment = annuity_Payment;
@@ -113,6 +129,19 @@ public class ScheduleGenerator : IScheduleGenerator
         var number_Of_Days = (end_Date - start_Date).Days;
         var annual_Interest_Rate = interest_Rate_In_Percent / 100;
         var interest = Math.Round(loan_Ammount * annual_Interest_Rate * number_Of_Days / 365,2);
+
+        return Math.Round(interest,2);
+    }
+
+        public decimal Get_Interest_For_Period_Fixed(decimal loan_Ammount, decimal interest_Rate_In_Percent)
+    {
+        if (loan_Ammount == 0)
+        {
+            return 0;
+        }
+
+        var annual_Interest_Rate = interest_Rate_In_Percent / 100;
+        var interest = Math.Round(loan_Ammount * annual_Interest_Rate / 12 ,2);
 
         return Math.Round(interest,2);
     }

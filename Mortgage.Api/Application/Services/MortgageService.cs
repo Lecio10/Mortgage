@@ -63,6 +63,8 @@ public class MortgageService : IMortgageService
         mortgage.Number_Of_Instalments = mortgageDto.Instalments;
         mortgage.Remaining_Instalments = Convert.ToInt32(mortgageDto.Instalments);
         mortgage.Interest_Rate_In_Percent = mortgageDto.Interest_Rate_In_Percent;
+        mortgage.Interest_Rate_Type = mortgageDto.Interest_Rate_Type ?? mortgage.Interest_Rate_Type;
+        mortgage.First_Interest_Amount = mortgageDto.First_Interest_Amount;
 
         mortgage.Schedule_Based_Interest_Sum = 0;
         mortgage.Schedule_Based_Total_Sum = 0;
